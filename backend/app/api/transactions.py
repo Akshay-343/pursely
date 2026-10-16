@@ -110,16 +110,22 @@ async def import_csv(file: UploadFile = File(...), db: Session = Depends(get_db)
     accs = {a.name.lower(): a for a in db.scalars(select(Account).where(Account.user_id == user.id))}
     created, errors = 0, []
     for i, row in enumerate(csv.DictReader(io.StringIO(text)), start=2):
+        # Fixed messages per field: the user gets a clear reason and no exception text leaves the server.
+        kind = (row.get("kind") or "expense").strip().lower()
+        if kind not in ("expense", "income"):
+            errors.append(f"line {i}: kind must be expense or income")
+            continue
         try:
-            kind = (row.get("kind") or "expense").strip().lower()
-            if kind not in ("expense", "income"):
-                raise ValueError("kind must be expense or income")
-            amount = Decimal(row["amount"].strip())
-            if amount <= 0:
-                raise ValueError("amount must be positive")
-            d = date.fromisoformat(row["date"].strip())
-        except (KeyError, ValueError, InvalidOperation, AttributeError) as e:
-            errors.append(f"line {i}: {e}")
+            amount = Decimal((row.get("amount") or "").strip())
+        except InvalidOperation:
+            amount = None
+        if amount is None or not amount.is_finite() or amount <= 0:
+            errors.append(f"line {i}: amount must be a positive number")
+            continue
+        try:
+            d = date.fromisoformat((row.get("date") or "").strip())
+        except ValueError:
+            errors.append(f"line {i}: date must be YYYY-MM-DD")
             continue
         cname, aname = (row.get("category") or "").strip(), (row.get("account") or "").strip()
         cat = acc = None

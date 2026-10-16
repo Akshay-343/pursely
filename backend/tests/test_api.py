@@ -85,9 +85,12 @@ def test_recurring_rule_generates(client):
 
 def test_csv_roundtrip(client):
     h = register(client)
-    csv = "date,kind,amount,category,account,note,tags\n2025-01-05,expense,42.5,Pets,Wallet,Food,a;b\nbad,expense,x,,,,\n"
+    csv = "date,kind,amount,category,account,note,tags\n2025-01-05,expense,42.5,Pets,Wallet,Food,a;b\n" \
+          "bad,expense,x,,,,\nbad,expense,1,,,,\n2025-01-05,gift,1,,,,\n2025-01-05,expense,NaN,,,,\n"
     r = client.post("/api/v1/transactions/import", headers=h, files={"file": ("t.csv", csv, "text/csv")}).json()
-    assert r["created"] == 1 and len(r["errors"]) == 1
+    assert r["created"] == 1
+    assert r["errors"] == ["line 3: amount must be a positive number", "line 4: date must be YYYY-MM-DD",
+                           "line 5: kind must be expense or income", "line 6: amount must be a positive number"]
     out = client.get("/api/v1/transactions/export.csv", headers=h).text
     assert "Pets" in out and "a;b" in out
     assert client.get("/api/v1/transactions?tag=a", headers=h).json()["total"] == 1

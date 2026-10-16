@@ -108,4 +108,5 @@ if __name__ == "__main__":
     password = sys.argv[2] if len(sys.argv) > 2 else DEMO_PASSWORD
     with SessionLocal() as session:
         seed(session, email, password)
-    print(f"Demo account ready: {email} / {password}")
+    # Only echo the well-known demo password, never one passed on the command line.
+    print(f"Demo account ready: {email} / {DEMO_PASSWORD}" if password == DEMO_PASSWORD else f"Demo account ready: {email}")
