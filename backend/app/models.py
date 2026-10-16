@@ -14,7 +14,10 @@ class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
-    password_hash: Mapped[str] = mapped_column(String(255))
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)  # null for Google-only accounts
+    google_sub: Mapped[str | None] = mapped_column(String(64), unique=True, index=True, nullable=True)
+    token_version: Mapped[int] = mapped_column(Integer, default=0, server_default="0")  # bumped on password reset; older tokens die
+    email_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa.false())
     default_currency: Mapped[str] = mapped_column(String(3), default="INR")
     email_reminders: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa.false())
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
@@ -141,4 +144,14 @@ class Attachment(Base):
     content_type: Mapped[str] = mapped_column(String(100))
     size: Mapped[int] = mapped_column(Integer)
     stored_name: Mapped[str] = mapped_column(String(80))
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)  # sha256 of the emailed token
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

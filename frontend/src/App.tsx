@@ -9,7 +9,9 @@ import Goals from "./pages/Goals";
 import Insights from "./pages/Insights";
 import Budgets from "./pages/Budgets";
 import Dashboard from "./pages/Dashboard";
+import ForgotPassword from "./pages/ForgotPassword";
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 import Settings from "./pages/Settings";
 import Subscriptions from "./pages/Subscriptions";
 import Transactions from "./pages/Transactions";
@@ -32,6 +34,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<Protected />}>
         <Route index element={<Dashboard />} />
         <Route path="transactions" element={<Transactions />} />

@@ -27,6 +27,13 @@ from app.main import app  # noqa: E402
 from app import models  # noqa: E402,F401
 
 
+@pytest.fixture(autouse=True)
+def _reset_rate_limits():
+    from app.services.ratelimit import auth_limiter
+    auth_limiter.reset()
+    yield
+
+
 @pytest.fixture()
 def client():
     dbmod.Base.metadata.drop_all(engine)

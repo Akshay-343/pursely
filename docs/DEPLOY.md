@@ -40,6 +40,36 @@ Optional: in Settings, Branches, protect `main` and require the CI checks to pas
 - Database: `docker compose exec db pg_dump -U money moneytracker > backup.sql`
 - Receipts: the `uploads` Docker volume.
 
-## Email reminders
-Use any SMTP provider (Gmail app password, Brevo, Mailgun, SES). Set the `SMTP_*` variables, then each
-user turns on "Also email me reminders" in Settings. Without SMTP, in-app reminders still work.
+## Email (welcome, password reset, reminders) with Gmail
+1. Turn on 2-Step Verification for the Gmail account, then create an **App Password** at
+   https://myaccount.google.com/apppasswords. Google shows 16 characters in groups of four; paste them **without spaces**.
+2. Put these in the server's `.env` (never in git; `.env` is already ignored):
+   ```
+   APP_URL=https://your-domain
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_USER=your.address@gmail.com
+   SMTP_PASSWORD=<the app password>
+   SMTP_FROM=Money Tracker <your.address@gmail.com>
+   ```
+3. Check it before relying on it: `docker compose exec api python -m app.send_test_email you@example.com`.
+   It prints the exact reason on failure (wrong app password, blocked port, and so on).
+
+Gmail only sends "From" the account itself, and allows about 500 messages a day, plenty for personal use. For more, use a
+dedicated provider (Brevo, Mailgun, SES) with the same `SMTP_*` variables. If you revoke the app password in your Google
+account, email stops and everything else keeps working. Without SMTP, in-app reminders still work.
+
+## Sign in with Google
+1. Open https://console.cloud.google.com/apis/credentials, create a project if you need one, and configure the OAuth consent
+   screen (app name, your support email). Publish it to "In production" so anyone can sign in, not only test users.
+2. Create credentials, **OAuth client ID**, type **Web application**. Under **Authorized JavaScript origins** add
+   `https://your-domain` (and `http://localhost:5173` for local use). No redirect URI is needed.
+3. Copy the Client ID into `.env` as `GOOGLE_CLIENT_ID=...` and restart the stack. The "Continue with Google" button then
+   appears on the sign-in page. The Client ID is public; there is no client secret to store.
+
+Signing in with Google creates an account on first use (and sends the welcome email). If an account with the same verified email
+already exists, Google sign-in is linked to it. People who joined with Google can add a password through "Forgot password".
+
+## Behind a proxy
+The API rate-limits sign-in, sign-up and password-reset requests per client IP using `X-Forwarded-For`. The provided Caddy and
+nginx configs set it. Keep the API unpublished (as `docker-compose.prod.yml` does) so clients cannot spoof that header.

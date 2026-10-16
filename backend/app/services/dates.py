@@ -1,5 +1,10 @@
 import calendar
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
+
+
+def utcnow() -> datetime:
+    """Naive UTC timestamp (the DB columns are timezone-naive UTC)."""
+    return datetime.now(UTC).replace(tzinfo=None)
 
 
 def add_months(d: date, n: int) -> date:

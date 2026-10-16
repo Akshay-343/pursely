@@ -1,13 +1,18 @@
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Field } from "@/components/Field";
+import GoogleButton from "@/components/GoogleButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { login, register } from "@/lib/api";
+import { authConfig, googleLogin, login, register } from "@/lib/api";
 
 export default function Login() {
   const nav = useNavigate();
+  const loc = useLocation();
+  const notice = (loc.state as { notice?: string } | null)?.notice;
+  const cfg = useQuery({ queryKey: ["auth-config"], queryFn: authConfig, staleTime: Infinity, retry: 1 });
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,24 +29,43 @@ export default function Login() {
     } catch (e: any) { setErr(e.message); } finally { setBusy(false); }
   }
 
+  async function onGoogle(credential: string) {
+    setErr(""); setBusy(true);
+    try { await googleLogin(credential); nav("/", { replace: true }); } catch (e: any) { setErr(e.message); } finally { setBusy(false); }
+  }
+
+  const clientId = cfg.data?.google_client_id;
+
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-sm">
         <CardContent className="space-y-4 p-6">
           <h1 className="text-xl font-bold">💸 Money Tracker</h1>
           <p className="text-sm text-muted-foreground">{mode === "login" ? "Sign in to your account" : "Create your account"}</p>
+          {notice && <p role="status" className="rounded-md bg-emerald-500/15 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400">{notice}</p>}
+
+          {clientId && (
+            <>
+              <GoogleButton clientId={clientId} onCredential={onGoogle} onError={setErr} />
+              <div className="flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" />or with email<span className="h-px flex-1 bg-border" /></div>
+            </>
+          )}
+
           <form className="space-y-3" onSubmit={submit}>
-            <Field label="Email"><Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
-            <Field label="Password"><Input type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} /></Field>
+            <Field label="Email"><Input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
+            <Field label="Password"><Input type="password" required minLength={8} autoComplete={mode === "login" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} /></Field>
             {mode === "register" && (
               <Field label="Default currency (ISO code)"><Input maxLength={3} minLength={3} required value={currency} onChange={(e) => setCurrency(e.target.value)} /></Field>
             )}
-            {err && <p className="text-sm text-destructive">{err}</p>}
+            {err && <p role="alert" className="text-sm text-destructive">{err}</p>}
             <Button className="w-full" disabled={busy}>{mode === "login" ? "Sign in" : "Sign up"}</Button>
           </form>
-          <button className="text-sm text-primary hover:underline" onClick={() => { setMode(mode === "login" ? "register" : "login"); setErr(""); }}>
-            {mode === "login" ? "No account? Sign up" : "Have an account? Sign in"}
-          </button>
+          <div className="flex items-center justify-between text-sm">
+            <button className="text-primary hover:underline" onClick={() => { setMode(mode === "login" ? "register" : "login"); setErr(""); }}>
+              {mode === "login" ? "No account? Sign up" : "Have an account? Sign in"}
+            </button>
+            {mode === "login" && <Link to="/forgot-password" state={{ email }} className="text-muted-foreground hover:underline">Forgot password?</Link>}
+          </div>
         </CardContent>
       </Card>
     </div>

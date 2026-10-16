@@ -8,6 +8,6 @@ from app.core.db import Base
 target_metadata = Base.metadata
 
 with create_engine(settings.database_url).connect() as conn:
-    context.configure(connection=conn, target_metadata=target_metadata)
+    context.configure(connection=conn, target_metadata=target_metadata, render_as_batch=conn.dialect.name == "sqlite")
     with context.begin_transaction():
         context.run_migrations()

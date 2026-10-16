@@ -20,6 +20,24 @@ class RegisterIn(BaseModel):
     default_currency: str = Field("INR", min_length=3, max_length=3)
 
 
+class GoogleIn(BaseModel):
+    credential: str = Field(min_length=20, max_length=4096)  # Google ID token (JWT) from Sign in with Google
+
+
+class ForgotIn(BaseModel):
+    email: EmailStr
+
+
+class ResetIn(BaseModel):
+    token: str = Field(min_length=20, max_length=200)
+    password: str = Field(min_length=8, max_length=72)
+
+
+class AuthConfig(BaseModel):
+    google_client_id: str
+    email_enabled: bool
+
+
 class RefreshIn(BaseModel):
     refresh_token: str
 
@@ -35,6 +53,8 @@ class UserOut(ORM):
     email: str
     default_currency: str
     email_reminders: bool = False
+    has_password: bool = True
+    google_linked: bool = False
 
 
 class UserUpdate(BaseModel):

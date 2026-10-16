@@ -4,7 +4,7 @@ Multi-user expense tracker: FastAPI + PostgreSQL + React (Vite, Tailwind, shadcn
 
 Features: transactions (filters, CSV import/export), dashboard (KPIs, charts, date ranges), subscription tracker
 (monthly/yearly cost, renewals, auto-post), budgets with warnings, recurring transactions, in-app reminders,
-user-defined categories/accounts, dark mode.
+user-defined categories/accounts, dark mode, Google sign-in, welcome and password-reset emails (Gmail/SMTP).
 
 ## Run with Docker
 ```

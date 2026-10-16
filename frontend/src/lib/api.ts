@@ -85,7 +85,7 @@ export type Sub = {
   category_id: number | null; account_id: number | null; status: string; remind_days_before: number;
   auto_post: boolean; notes: string | null;
 };
-export type User = { id: number; email: string; default_currency: string; email_reminders: boolean };
+export type User = { id: number; email: string; default_currency: string; email_reminders: boolean; has_password: boolean; google_linked: boolean };
 export type Attachment = { id: number; transaction_id: number; filename: string; content_type: string; size: number };
 
 export async function fetchBlobUrl(path: string): Promise<string> {
@@ -93,3 +93,13 @@ export async function fetchBlobUrl(path: string): Promise<string> {
   if (!res.ok) throw new ApiError(res.status, "Could not load file");
   return URL.createObjectURL(await res.blob());
 }
+
+export type AuthConfig = { google_client_id: string; email_enabled: boolean };
+export const authConfig = () => api<AuthConfig>("/auth/config");
+
+export async function googleLogin(credential: string) {
+  const body = await api("/auth/google", { body: { credential } });
+  tokens.set(body.access_token, body.refresh_token);
+}
+export const forgotPassword = (email: string) => api<{ detail: string }>("/auth/forgot-password", { body: { email } });
+export const resetPassword = (token: string, password: string) => api("/auth/reset-password", { body: { token, password } });

@@ -78,7 +78,8 @@ function Profile() {
   const toggle = useMutation({ mutationFn: (v: boolean) => api("/auth/me", { method: "PATCH", body: { email_reminders: v } }), onSuccess: () => qc.invalidateQueries({ queryKey: ["me"] }) });
   return (
     <Card><CardHeader><CardTitle>Profile</CardTitle></CardHeader><CardContent>
-      <p className="mb-3 text-sm">{me.email}</p>
+      <p className="mb-1 text-sm">{me.email}</p>
+      <p className="mb-3 text-xs text-muted-foreground">{me.google_linked ? "Google sign-in is connected." : "Signed in with email and password."}{!me.has_password && " You have no password yet; use “Forgot password” on the sign-in page to set one."}</p>
       <form className="flex items-end gap-2" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
         <Field label="Default currency (dashboard totals)"><Input className="w-24" maxLength={3} minLength={3} value={cur} onChange={(e) => setCur(e.target.value)} /></Field>
         <Button size="sm" disabled={save.isPending}>Save</Button>

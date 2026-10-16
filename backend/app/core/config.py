@@ -15,6 +15,11 @@ class Settings(BaseSettings):
     smtp_user: str = ""
     smtp_password: str = ""
     smtp_from: str = ""
+    smtp_starttls: bool = True   # port 465 uses implicit TLS instead
+    app_url: str = "http://localhost:5173"   # used in email links
+    google_client_id: str = ""
+    reset_token_minutes: int = 30
+    reset_max_per_hour: int = 3
 
 
 settings = Settings()
