@@ -1,14 +1,15 @@
 # Production overlay: HTTPS via Caddy, nothing but 80/443 exposed.
+# (docker-compose.override.yml, which publishes the dev ports, is NOT loaded when -f flags are given.)
 # Run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 services:
   db:
     restart: unless-stopped
   api:
     restart: unless-stopped
-    ports: !reset []
+    environment:
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in .env (openssl rand -hex 32)}
   web:
     restart: unless-stopped
-    ports: !reset []
   caddy:
     image: caddy:2
     restart: unless-stopped

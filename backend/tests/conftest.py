@@ -1,7 +1,10 @@
 import os
 
-os.environ["DATABASE_URL"] = "sqlite://"
+# Tests run on in-memory SQLite by default; CI also runs them against PostgreSQL via TEST_DATABASE_URL.
+TEST_DB_URL = os.environ.get("TEST_DATABASE_URL", "sqlite://")
+os.environ["DATABASE_URL"] = TEST_DB_URL
 os.environ["RUN_SCHEDULER"] = "false"
+os.environ["SECRET_KEY"] = "test-secret-key-that-is-at-least-32-bytes-long"
 
 import pytest
 from fastapi.testclient import TestClient
@@ -13,7 +16,10 @@ from app.core import db as dbmod
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+if TEST_DB_URL.startswith("sqlite"):
+    engine = create_engine(TEST_DB_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool)
+else:
+    engine = create_engine(TEST_DB_URL, pool_pre_ping=True)
 dbmod.engine = engine
 dbmod.SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 

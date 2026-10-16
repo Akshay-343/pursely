@@ -1,5 +1,4 @@
 import io
-from collections import defaultdict
 from datetime import date
 
 from fastapi import APIRouter, Depends, Query, Response
@@ -12,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from app.core.db import get_db
 from app.core.security import current_user
-from app.models import Account, Category, Transaction
+from app.models import Category, Transaction
 from app.services import stats
 
 router = APIRouter(tags=["insights"])
@@ -32,8 +31,8 @@ def overview(months: int = Query(6, ge=2, le=24), db: Session = Depends(get_db),
     trend = []
     for i in range(months - 1, -1, -1):
         f = stats.shift_month(this_first, -i)
-        f, l = stats.month_bounds(f)
-        spent, inc = stats.total(db, user, f, l, "expense", overall=True), stats.total(db, user, f, l, "income", overall=True)
+        f, month_end = stats.month_bounds(f)
+        spent, inc = stats.total(db, user, f, month_end, "expense", overall=True), stats.total(db, user, f, month_end, "income", overall=True)
         trend.append({"month": f.strftime("%Y-%m"), "spent": spent, "income": inc,
                       "savings_rate": round(float((inc - spent) / inc * 100), 1) if inc else None})
 

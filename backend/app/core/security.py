@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import bcrypt
 import jwt
@@ -25,7 +25,7 @@ def verify_password(p: str, h: str) -> bool:
 
 
 def make_token(user_id: int, kind: str, delta: timedelta) -> str:
-    exp = datetime.now(timezone.utc) + delta
+    exp = datetime.now(UTC) + delta
     return jwt.encode({"sub": str(user_id), "type": kind, "exp": exp}, settings.secret_key, ALGO)
 
 
@@ -41,7 +41,7 @@ def decode(token: str, kind: str) -> int:
     try:
         data = jwt.decode(token, settings.secret_key, algorithms=[ALGO])
     except jwt.PyJWTError:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid or expired token")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid or expired token") from None
     if data.get("type") != kind:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Wrong token type")
     return int(data["sub"])

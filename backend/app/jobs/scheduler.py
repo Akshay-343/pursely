@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 from app.core.db import SessionLocal
 from app.models import Budget, Category, Notification, RecurringRule, Subscription, Transaction, User
 from app.services import stats
-from app.services.email import send_email
 from app.services.dates import advance
+from app.services.email import send_email
 
 
 def _notify(db: Session, user_id: int, key: str, message: str):

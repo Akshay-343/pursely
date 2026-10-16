@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import APIRouter, Depends
+from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app import schemas
@@ -8,7 +8,6 @@ from app.api.crud import make_router
 from app.core.db import get_db
 from app.core.security import current_user
 from app.models import Goal
-from app.services.dates import add_months
 from app.services.ownership import get_owned
 
 router = make_router("/goals", Goal, schemas.GoalIn, schemas.GoalOut, Goal.id)

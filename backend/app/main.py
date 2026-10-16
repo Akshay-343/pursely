@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -11,6 +12,8 @@ from app.jobs.scheduler import job
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    if len(settings.secret_key) < 32 or settings.secret_key.startswith("dev-secret"):
+        logging.getLogger(__name__).warning("SECRET_KEY is short or the development default; set a random 32+ character value in production")
     sched = None
     if settings.run_scheduler:
         sched = BackgroundScheduler()

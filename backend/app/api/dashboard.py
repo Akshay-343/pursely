@@ -3,13 +3,13 @@ from datetime import date, timedelta
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import func, or_, select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.core.db import get_db
 from app.core.security import current_user
 from app.jobs.scheduler import run_jobs
-from app.models import Account, Budget, Category, Notification, Subscription, Transaction
+from app.models import Budget, Category, Notification, Subscription, Transaction
 from app.schemas import NotificationOut
 from app.services import stats
 from app.services.dates import MONTHLY_FACTOR
