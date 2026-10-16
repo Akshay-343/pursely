@@ -9,8 +9,8 @@
 A full-stack personal finance app for tracking expenses, subscriptions, budgets and savings goals,
 with insights that tell you where your money actually goes.
 
-[![CI](https://github.com/Akshay-343/Moneytracker/actions/workflows/ci.yml/badge.svg)](https://github.com/Akshay-343/Moneytracker/actions/workflows/ci.yml)
-[![Security](https://github.com/Akshay-343/Moneytracker/actions/workflows/security.yml/badge.svg)](https://github.com/Akshay-343/Moneytracker/actions/workflows/security.yml)
+[![CI](https://github.com/Akshay-343/pursely/actions/workflows/ci.yml/badge.svg)](https://github.com/Akshay-343/pursely/actions/workflows/ci.yml)
+[![Security](https://github.com/Akshay-343/pursely/actions/workflows/security.yml/badge.svg)](https://github.com/Akshay-343/pursely/actions/workflows/security.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-0f766e.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
@@ -105,7 +105,7 @@ Design decisions worth calling out:
 ### With Docker (quickest)
 
 ```bash
-git clone https://github.com/Akshay-343/Moneytracker.git pursely && cd pursely
+git clone https://github.com/Akshay-343/pursely.git && cd pursely
 cp .env.example .env
 docker compose up --build
 ```
