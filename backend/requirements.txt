@@ -12,3 +12,4 @@ apscheduler==3.10.4
 python-multipart==0.0.20
 httpx==0.28.1
 pytest==8.3.4
+reportlab==4.2.5

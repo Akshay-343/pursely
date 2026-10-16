@@ -5,14 +5,20 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.db import SessionLocal
-from app.models import Notification, RecurringRule, Subscription, Transaction
+from app.models import Budget, Category, Notification, RecurringRule, Subscription, Transaction, User
+from app.services import stats
+from app.services.email import send_email
 from app.services.dates import advance
 
 
 def _notify(db: Session, user_id: int, key: str, message: str):
     exists = db.scalar(select(Notification.id).where(Notification.user_id == user_id, Notification.dedupe_key == key))
-    if not exists:
-        db.add(Notification(user_id=user_id, dedupe_key=key, message=message))
+    if exists:
+        return
+    db.add(Notification(user_id=user_id, dedupe_key=key, message=message))
+    user = db.get(User, user_id)
+    if user and user.email_reminders:
+        send_email(user.email, "Money Tracker reminder", message)
 
 
 def run_jobs(db: Session, today: date | None = None, user_id: int | None = None):
@@ -40,7 +46,28 @@ def run_jobs(db: Session, today: date | None = None, user_id: int | None = None)
             when = "today" if days == 0 else f"in {days} day{'s' if days != 1 else ''}"
             _notify(db, s.user_id, f"sub:{s.id}:{s.next_billing_date}",
                     f"{s.name} renews {when} ({s.currency} {s.amount})")
+    _budget_alerts(db, today, user_id)
     db.commit()
+
+
+def _budget_alerts(db: Session, today: date, user_id: int | None):
+    first, last = stats.month_bounds(today)
+    q = select(Budget)
+    if user_id:
+        q = q.where(Budget.user_id == user_id)
+    db.flush()
+    for b in db.scalars(q).all():
+        user = db.get(User, b.user_id)
+        spent = stats.total(db, user, first, last, "expense", b.category_id, overall=b.category_id is None)
+        pct = float(spent / b.amount * 100) if b.amount else 0
+        level = 100 if pct >= 100 else 80 if pct >= 80 else 0
+        if not level:
+            continue
+        cat = db.get(Category, b.category_id) if b.category_id else None
+        name = cat.name if cat else "Overall"
+        text = "is over budget" if level == 100 else "has used 80% of its budget"
+        _notify(db, b.user_id, f"budget:{b.id}:{first:%Y-%m}:{level}",
+                f"{name} {text} ({user.default_currency} {spent} of {b.amount})")
 
 
 def job():

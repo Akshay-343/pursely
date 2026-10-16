@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from decimal import Decimal
 
+import sqlalchemy as sa
 from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, Numeric, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -15,6 +16,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255))
     default_currency: Mapped[str] = mapped_column(String(3), default="INR")
+    email_reminders: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa.false())
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
@@ -105,4 +107,38 @@ class Notification(Base):
     message: Mapped[str] = mapped_column(String(300))
     dedupe_key: Mapped[str] = mapped_column(String(100), index=True)
     read: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class Transfer(Base):
+    __tablename__ = "transfers"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    from_account_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"))
+    to_account_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"))
+    amount: Mapped[Decimal] = mapped_column(Money)
+    date: Mapped[date] = mapped_column(Date)
+    note: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+
+class Goal(Base):
+    __tablename__ = "goals"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(100))
+    target_amount: Mapped[Decimal] = mapped_column(Money)
+    saved_amount: Mapped[Decimal] = mapped_column(Money, default=0)
+    deadline: Mapped[date | None] = mapped_column(Date, nullable=True)
+    color: Mapped[str] = mapped_column(String(9), default="#0f766e")
+
+
+class Attachment(Base):
+    __tablename__ = "attachments"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    transaction_id: Mapped[int] = mapped_column(ForeignKey("transactions.id", ondelete="CASCADE"), index=True)
+    filename: Mapped[str] = mapped_column(String(200))
+    content_type: Mapped[str] = mapped_column(String(100))
+    size: Mapped[int] = mapped_column(Integer)
+    stored_name: Mapped[str] = mapped_column(String(80))
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

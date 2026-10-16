@@ -1,0 +1,23 @@
+# Production overlay: HTTPS via Caddy, nothing but 80/443 exposed.
+# Run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+services:
+  db:
+    restart: unless-stopped
+  api:
+    restart: unless-stopped
+    ports: !reset []
+  web:
+    restart: unless-stopped
+    ports: !reset []
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on: [web]
+volumes:
+  caddy_data:

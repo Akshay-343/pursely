@@ -9,7 +9,10 @@ from sqlalchemy.orm import Session
 
 from app.core.db import get_db
 from app.core.security import current_user
-from app.models import Account, Category, Transaction
+from pathlib import Path
+
+from app.core.config import settings
+from app.models import Account, Attachment, Category, Transaction
 from app.schemas import TransactionIn, TransactionOut, TransactionPage
 from app.services.ownership import check_refs, get_owned
 
@@ -75,7 +78,11 @@ def update(tid: int, body: TransactionIn, db: Session = Depends(get_db), user=De
 
 @router.delete("/{tid}", status_code=204)
 def delete(tid: int, db: Session = Depends(get_db), user=Depends(current_user)):
-    db.delete(get_owned(db, Transaction, tid, user.id))
+    t = get_owned(db, Transaction, tid, user.id)
+    for a in db.scalars(select(Attachment).where(Attachment.transaction_id == t.id)):
+        (Path(settings.upload_dir) / a.stored_name).unlink(missing_ok=True)
+        db.delete(a)  # explicit: SQLite test DBs do not enforce ON DELETE CASCADE
+    db.delete(t)
     db.commit()
     return Response(status_code=204)
 

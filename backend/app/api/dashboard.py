@@ -11,6 +11,7 @@ from app.core.security import current_user
 from app.jobs.scheduler import run_jobs
 from app.models import Account, Budget, Category, Notification, Subscription, Transaction
 from app.schemas import NotificationOut
+from app.services import stats
 from app.services.dates import MONTHLY_FACTOR
 
 router = APIRouter(tags=["dashboard"])
@@ -23,18 +24,11 @@ def _range(from_, to):
 
 
 def _base(user, from_, to):
-    """Transactions in the user's default currency (or with no account)."""
-    return (
-        select(Transaction)
-        .outerjoin(Account, Transaction.account_id == Account.id)
-        .where(Transaction.user_id == user.id, Transaction.date >= from_, Transaction.date <= to,
-               or_(Account.id.is_(None), Account.currency == user.default_currency))
-    )
+    return stats.base(user, from_, to)
 
 
 def _sum(db, user, from_, to, kind):
-    sub = _base(user, from_, to).where(Transaction.kind == kind).subquery()
-    return db.scalar(select(func.coalesce(func.sum(sub.c.amount), 0))) or Decimal(0)
+    return stats.total(db, user, from_, to, kind, overall=True)
 
 
 @router.get("/dashboard/summary")

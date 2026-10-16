@@ -75,6 +75,7 @@ function Profile() {
   const me = useMe().data!;
   const [cur, setCur] = useState(me.default_currency);
   const save = useMutation({ mutationFn: () => api("/auth/me", { method: "PATCH", body: { default_currency: cur.toUpperCase() } }), onSuccess: () => qc.invalidateQueries() });
+  const toggle = useMutation({ mutationFn: (v: boolean) => api("/auth/me", { method: "PATCH", body: { email_reminders: v } }), onSuccess: () => qc.invalidateQueries({ queryKey: ["me"] }) });
   return (
     <Card><CardHeader><CardTitle>Profile</CardTitle></CardHeader><CardContent>
       <p className="mb-3 text-sm">{me.email}</p>
@@ -82,6 +83,11 @@ function Profile() {
         <Field label="Default currency (dashboard totals)"><Input className="w-24" maxLength={3} minLength={3} value={cur} onChange={(e) => setCur(e.target.value)} /></Field>
         <Button size="sm" disabled={save.isPending}>Save</Button>
       </form>
+      <label className="mt-4 flex items-center gap-2 text-sm">
+        <input type="checkbox" checked={me.email_reminders} onChange={(e) => toggle.mutate(e.target.checked)} />
+        Also email me renewal and budget reminders
+      </label>
+      <p className="mt-1 text-xs text-muted-foreground">Emails are sent only if the server has email (SMTP) configured. In-app reminders always work.</p>
       <p className="mt-2 text-xs text-muted-foreground">Dashboard totals include transactions in this currency (and ones with no account). No currency conversion.</p>
     </CardContent></Card>
   );

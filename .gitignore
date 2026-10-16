@@ -7,3 +7,5 @@ dist/
 *.db
 .pytest_cache/
 .ruff_cache/
+uploads/
+*.tsbuildinfo

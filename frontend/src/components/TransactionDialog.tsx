@@ -4,6 +4,7 @@ import { Field } from "@/components/Field";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input, Select } from "@/components/ui/input";
+import { PendingAttachments, SavedAttachments, uploadAttachment } from "@/components/Attachments";
 import { api, type Tx } from "@/lib/api";
 import { useAccounts, useCategories } from "@/lib/hooks";
 import { today } from "@/lib/utils";
@@ -14,10 +15,12 @@ export default function TransactionDialog({ open, onOpenChange, tx }: { open: bo
   const accounts = useAccounts().data ?? [];
   const [f, setF] = useState({ kind: "expense", amount: "", date: today(), category_id: "", account_id: "", note: "", tags: "" });
   const [err, setErr] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
     if (!open) return;
     setErr("");
+    setFiles([]);
     setF(tx
       ? { kind: tx.kind, amount: tx.amount, date: tx.date, category_id: String(tx.category_id ?? ""), account_id: String(tx.account_id ?? ""), note: tx.note ?? "", tags: tx.tags.join(", ") }
       : { kind: "expense", amount: "", date: today(), category_id: "", account_id: String(accounts[0]?.id ?? ""), note: "", tags: "" });
@@ -31,7 +34,13 @@ export default function TransactionDialog({ open, onOpenChange, tx }: { open: bo
         account_id: f.account_id ? Number(f.account_id) : null,
         tags: f.tags.split(",").map((t) => t.trim()).filter(Boolean),
       };
-      return tx ? api(`/transactions/${tx.id}`, { method: "PUT", body }) : api("/transactions", { body });
+      return tx ? api(`/transactions/${tx.id}`, { method: "PUT", body }) : api<Tx>("/transactions", { body }).then(async (t) => {
+        // The transaction exists now; a failed receipt upload must not lose it, so report and keep going.
+        const failed: string[] = [];
+        for (const f of files) { try { await uploadAttachment(t.id, f); } catch { failed.push(f.name); } }
+        if (failed.length) alert(`Saved, but these receipts failed to upload: ${failed.join(", ")}. Open the transaction to retry.`);
+        return t;
+      });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["transactions"] });
@@ -72,6 +81,7 @@ export default function TransactionDialog({ open, onOpenChange, tx }: { open: bo
           </Field>
           <Field label="Note"><Input value={f.note} onChange={set("note")} placeholder="Optional" /></Field>
           <Field label="Tags (comma separated)"><Input value={f.tags} onChange={set("tags")} /></Field>
+          {tx ? <SavedAttachments txId={tx.id} /> : <PendingAttachments files={files} setFiles={setFiles} />}
           {err && <p className="text-sm text-destructive">{err}</p>}
           <Button type="submit" className="w-full" disabled={save.isPending}>{save.isPending ? "Saving…" : "Save"}</Button>
         </form>

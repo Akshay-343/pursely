@@ -1,0 +1,5 @@
+# Automatic HTTPS. Set DOMAIN in .env (e.g. money.example.com) and point its DNS at this server.
+{$DOMAIN} {
+  encode gzip
+  reverse_proxy web:80
+}

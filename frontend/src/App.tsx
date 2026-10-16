@@ -4,6 +4,9 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import { tokens } from "./lib/api";
 import { useMe } from "./lib/hooks";
+import Accounts from "./pages/Accounts";
+import Goals from "./pages/Goals";
+import Insights from "./pages/Insights";
 import Budgets from "./pages/Budgets";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
@@ -34,6 +37,9 @@ export default function App() {
         <Route path="transactions" element={<Transactions />} />
         <Route path="subscriptions" element={<Subscriptions />} />
         <Route path="budgets" element={<Budgets />} />
+        <Route path="accounts" element={<Accounts />} />
+        <Route path="goals" element={<Goals />} />
+        <Route path="insights" element={<Insights />} />
         <Route path="settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

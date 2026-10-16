@@ -34,10 +34,12 @@ class UserOut(ORM):
     id: int
     email: str
     default_currency: str
+    email_reminders: bool = False
 
 
 class UserUpdate(BaseModel):
-    default_currency: str = Field(min_length=3, max_length=3)
+    default_currency: str | None = Field(None, min_length=3, max_length=3)
+    email_reminders: bool | None = None
 
 
 class AccountIn(BaseModel):
@@ -140,3 +142,39 @@ class NotificationOut(ORM):
     id: int
     message: str
     read: bool
+
+
+class TransferIn(BaseModel):
+    from_account_id: int
+    to_account_id: int
+    amount: Decimal = Amount
+    date: date
+    note: str | None = None
+
+
+class TransferOut(TransferIn, ORM):
+    id: int
+
+
+class GoalIn(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    target_amount: Decimal = Amount
+    saved_amount: Decimal = Field(Decimal("0"), ge=0)
+    deadline: date | None = None
+    color: str = "#0f766e"
+
+
+class GoalOut(GoalIn, ORM):
+    id: int
+
+
+class ContributeIn(BaseModel):
+    amount: Decimal = Field(max_digits=12, decimal_places=2)  # negative = withdraw
+
+
+class AttachmentOut(ORM):
+    id: int
+    transaction_id: int
+    filename: str
+    content_type: str
+    size: int

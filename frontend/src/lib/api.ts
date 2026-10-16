@@ -85,4 +85,11 @@ export type Sub = {
   category_id: number | null; account_id: number | null; status: string; remind_days_before: number;
   auto_post: boolean; notes: string | null;
 };
-export type User = { id: number; email: string; default_currency: string };
+export type User = { id: number; email: string; default_currency: string; email_reminders: boolean };
+export type Attachment = { id: number; transaction_id: number; filename: string; content_type: string; size: number };
+
+export async function fetchBlobUrl(path: string): Promise<string> {
+  const res = await fetch(BASE + path, { headers: { Authorization: `Bearer ${tokens.get()}` } });
+  if (!res.ok) throw new ApiError(res.status, "Could not load file");
+  return URL.createObjectURL(await res.blob());
+}

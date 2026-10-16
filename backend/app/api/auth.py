@@ -61,6 +61,9 @@ def me(user: User = Depends(sec.current_user)):
 
 @router.patch("/me", response_model=UserOut)
 def update_me(body: UserUpdate, user: User = Depends(sec.current_user), db: Session = Depends(get_db)):
-    user.default_currency = body.default_currency.upper()
+    if body.default_currency:
+        user.default_currency = body.default_currency.upper()
+    if body.email_reminders is not None:
+        user.email_reminders = body.email_reminders
     db.commit()
     return user
