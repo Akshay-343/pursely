@@ -41,6 +41,18 @@ account, email stops and everything else keeps working. Without SMTP, in-app rem
 Signing in with Google creates an account on first use (and sends the welcome email). If an account with the same verified email
 already exists, Google sign-in is linked to it. People who joined with Google can add a password through "Forgot password".
 
+## AI tips and Ask Pursely (Groq)
+1. Create a free API key at https://console.groq.com/keys.
+2. Put it in `.env` as `GROQ_API_KEY=...` and restart the API. An **AI tips** card appears on the dashboard and an
+   **Ask Pursely** box on the Insights page.
+3. Optionally set `GROQ_MODEL` to any chat model Groq lists at https://console.groq.com/docs/models
+   (default `openai/gpt-oss-120b`). If Groq retires the default, change this value.
+
+What is sent: totals per month, category changes, budgets, subscription costs, top merchants (from transaction notes) and the
+five biggest expenses this month. Your email, account names and full transaction list are not sent. Each user can make
+`AI_REQUESTS_PER_HOUR` requests (default 20) and tips are cached until the user's data changes, which keeps usage inside
+Groq's free tier.
+
 ## Rate limiting behind a proxy
 The API rate-limits sign-in, sign-up and password-reset requests per client IP using `X-Forwarded-For`. The provided nginx config
 sets it. In production, only expose the API through a proxy you control so clients cannot spoof that header.

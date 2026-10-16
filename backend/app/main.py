@@ -5,7 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import accounts_ext, attachments, auth, crud, dashboard, goals, insights, transactions
+from app.api import accounts_ext, ai, attachments, auth, crud, dashboard, goals, insights, transactions
 from app.core.config import settings
 from app.jobs.scheduler import job, reset_demo
 
@@ -35,7 +35,7 @@ app.add_middleware(CORSMiddleware, allow_origins=[o.strip() for o in settings.co
 api = APIRouter(prefix="/api/v1")
 for r in (auth.router, transactions.router, crud.categories, crud.accounts, crud.budgets,
           crud.subscriptions, crud.recurring, dashboard.router, accounts_ext.router, goals.router,
-          insights.router, attachments.router):
+          insights.router, attachments.router, ai.router):
     api.include_router(r)
 app.include_router(api)
 

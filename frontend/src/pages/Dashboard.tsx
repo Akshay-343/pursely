@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { AiTips } from "@/components/Ai";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -59,6 +60,8 @@ export default function Dashboard() {
             <CardContent><p className={cn("text-2xl font-bold tabular-nums", k.tone)}>{k.value == null ? "—" : money(k.value, cur)}</p></CardContent></Card>
         ))}
       </div>
+
+      <AiTips />
 
       <div className="grid gap-4 lg:grid-cols-5">
         <Card className="lg:col-span-3">

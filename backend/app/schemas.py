@@ -37,6 +37,7 @@ class AuthConfig(BaseModel):
     google_client_id: str
     email_enabled: bool
     demo: bool = False
+    ai_enabled: bool = False
 
 
 class RefreshIn(BaseModel):
@@ -199,3 +200,13 @@ class AttachmentOut(ORM):
     filename: str
     content_type: str
     size: int
+
+
+class AiTurn(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(max_length=4000)
+
+
+class AskIn(BaseModel):
+    question: str = Field(min_length=2, max_length=500)
+    history: list[AiTurn] = Field(default_factory=list, max_length=10)

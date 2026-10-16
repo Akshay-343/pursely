@@ -6,8 +6,8 @@ from fastapi import HTTPException, Request
 
 
 class RateLimiter:
-    def __init__(self, limit: int, window_s: int):
-        self.limit, self.window = limit, window_s
+    def __init__(self, limit: int, window_s: int, message: str = "Too many attempts. Please wait a few minutes and try again."):
+        self.limit, self.window, self.message = limit, window_s, message
         self.hits: dict[str, deque[float]] = defaultdict(deque)
 
     def check(self, key: str):
@@ -16,7 +16,7 @@ class RateLimiter:
         while q and now - q[0] > self.window:
             q.popleft()
         if len(q) >= self.limit:
-            raise HTTPException(429, "Too many attempts. Please wait a few minutes and try again.")
+            raise HTTPException(429, self.message)
         q.append(now)
 
     def reset(self):

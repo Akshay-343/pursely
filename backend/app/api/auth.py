@@ -63,7 +63,8 @@ def _user_out(u: User) -> UserOut:
 @router.get("/config", response_model=AuthConfig)
 def auth_config():
     """Public values the login page needs. The Google client ID is not a secret."""
-    return AuthConfig(google_client_id=settings.google_client_id, email_enabled=email_enabled(), demo=settings.demo_mode)
+    return AuthConfig(google_client_id=settings.google_client_id, email_enabled=email_enabled(), demo=settings.demo_mode,
+                      ai_enabled=bool(settings.groq_api_key))
 
 
 @router.post("/demo", response_model=TokenOut)

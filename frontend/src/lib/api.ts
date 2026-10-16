@@ -94,7 +94,7 @@ export async function fetchBlobUrl(path: string): Promise<string> {
   return URL.createObjectURL(await res.blob());
 }
 
-export type AuthConfig = { google_client_id: string; email_enabled: boolean; demo: boolean };
+export type AuthConfig = { google_client_id: string; email_enabled: boolean; demo: boolean; ai_enabled: boolean };
 export const authConfig = () => api<AuthConfig>("/auth/config");
 
 export async function googleLogin(credential: string) {
@@ -105,5 +105,9 @@ export async function demoLogin() {
   const body = await api("/auth/demo", { method: "POST" });
   tokens.set(body.access_token, body.refresh_token);
 }
+export type AiTip = { title: string; detail: string; kind: "saving" | "warning" | "positive" };
+export type AiTurn = { role: "user" | "assistant"; content: string };
+export const aiTips = (refresh = false) => api<{ summary: string; tips: AiTip[] }>(`/ai/tips${refresh ? "?refresh=true" : ""}`);
+export const aiAsk = (question: string, history: AiTurn[]) => api<{ answer: string }>("/ai/ask", { body: { question, history } });
 export const forgotPassword = (email: string) => api<{ detail: string }>("/auth/forgot-password", { body: { email } });
 export const resetPassword = (token: string, password: string) => api("/auth/reset-password", { body: { token, password } });

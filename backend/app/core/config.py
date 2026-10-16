@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     google_client_id: str = ""
     reset_token_minutes: int = 30
     reset_max_per_hour: int = 3
+    groq_api_key: str = ""   # empty turns the AI features off
+    groq_model: str = "openai/gpt-oss-120b"
+    ai_requests_per_hour: int = 20   # per user, to stay inside Groq's free tier
     demo_mode: bool = False   # public demo: "Try the demo" button, demo data reset at startup and daily
 
 

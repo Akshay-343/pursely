@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Download } from "lucide-react";
 import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { AskAi } from "@/components/Ai";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select } from "@/components/ui/input";
@@ -50,6 +51,8 @@ export default function Insights() {
           <p className={cn("text-2xl font-bold tabular-nums", last?.savings_rate != null && last.savings_rate < 0 && "text-red-500")}>{last?.savings_rate != null ? `${last.savings_rate}%` : "—"}</p>
           <p className="text-xs text-muted-foreground">Share of income you kept</p></CardContent></Card>
       </div>
+
+      <AskAi />
 
       <Card>
         <CardHeader className="flex-row items-center justify-between space-y-0"><CardTitle>Income vs spending by month</CardTitle>
