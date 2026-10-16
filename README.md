@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="frontend/public/favicon.svg" alt="Pursely logo" width="88" height="88" />
+<img src="frontend/public/icon-192.png" alt="Pursely logo" width="96" height="96" />
 
 # Pursely
 
@@ -11,7 +11,7 @@ with insights that tell you where your money actually goes.
 
 [![CI](https://github.com/Akshay-343/pursely/actions/workflows/ci.yml/badge.svg)](https://github.com/Akshay-343/pursely/actions/workflows/ci.yml)
 [![Security](https://github.com/Akshay-343/pursely/actions/workflows/security.yml/badge.svg)](https://github.com/Akshay-343/pursely/actions/workflows/security.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-0f766e.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-02775e.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)

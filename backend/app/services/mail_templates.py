@@ -8,7 +8,7 @@ def _wrap(title: str, body_html: str, button: tuple[str, str] | None = None) -> 
     btn = ""
     if button:
         label, url = button
-        btn = (f'<p style="margin:24px 0"><a href="{escape(url, quote=True)}" style="background:#0f766e;color:#ffffff;'
+        btn = (f'<p style="margin:24px 0"><a href="{escape(url, quote=True)}" style="background:#02775e;color:#ffffff;'
                f'padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block">{escape(label)}</a></p>'
                f'<p style="color:#6b7280;font-size:13px">Button not working? Copy this link into your browser:<br>'
                f'<span style="word-break:break-all">{escape(url)}</span></p>')

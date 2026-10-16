@@ -182,7 +182,7 @@ class GoalIn(BaseModel):
     target_amount: Decimal = Amount
     saved_amount: Decimal = Field(Decimal("0"), ge=0)
     deadline: date | None = None
-    color: str = "#0f766e"
+    color: str = "#02775e"
 
 
 class GoalOut(GoalIn, ORM):

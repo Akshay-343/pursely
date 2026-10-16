@@ -89,7 +89,7 @@ def seed(db: Session, email: str = DEMO_EMAIL, password: str = DEMO_PASSWORD, to
     ])
     db.add(Budget(user_id=user.id, category_id=None, amount=_d(55000)))
     db.add_all([
-        Goal(user_id=user.id, name="Emergency fund", target_amount=_d(300000), saved_amount=_d(184000), color="#0f766e"),
+        Goal(user_id=user.id, name="Emergency fund", target_amount=_d(300000), saved_amount=_d(184000), color="#02775e"),
         Goal(user_id=user.id, name="Goa trip", target_amount=_d(40000), saved_amount=_d(12500),
              deadline=today + timedelta(days=120), color="#f97316"),
         Goal(user_id=user.id, name="New laptop", target_amount=_d(120000), saved_amount=_d(30000),

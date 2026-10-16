@@ -132,7 +132,7 @@ class Goal(Base):
     target_amount: Mapped[Decimal] = mapped_column(Money)
     saved_amount: Mapped[Decimal] = mapped_column(Money, default=0)
     deadline: Mapped[date | None] = mapped_column(Date, nullable=True)
-    color: Mapped[str] = mapped_column(String(9), default="#0f766e")
+    color: Mapped[str] = mapped_column(String(9), default="#02775e")
 
 
 class Attachment(Base):
