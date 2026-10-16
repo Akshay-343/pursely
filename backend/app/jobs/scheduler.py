@@ -18,7 +18,7 @@ def _notify(db: Session, user_id: int, key: str, message: str):
     db.add(Notification(user_id=user_id, dedupe_key=key, message=message))
     user = db.get(User, user_id)
     if user and user.email_reminders:
-        send_email(user.email, "Money Tracker reminder", message)
+        send_email(user.email, "Pursely reminder", message)
 
 
 def run_jobs(db: Session, today: date | None = None, user_id: int | None = None):
@@ -73,3 +73,10 @@ def _budget_alerts(db: Session, today: date, user_id: int | None):
 def job():
     with SessionLocal() as db:
         run_jobs(db)
+
+
+def reset_demo():
+    from app.seed_demo import seed
+
+    with SessionLocal() as db:
+        seed(db)

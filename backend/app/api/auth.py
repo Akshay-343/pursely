@@ -63,7 +63,18 @@ def _user_out(u: User) -> UserOut:
 @router.get("/config", response_model=AuthConfig)
 def auth_config():
     """Public values the login page needs. The Google client ID is not a secret."""
-    return AuthConfig(google_client_id=settings.google_client_id, email_enabled=email_enabled())
+    return AuthConfig(google_client_id=settings.google_client_id, email_enabled=email_enabled(), demo=settings.demo_mode)
+
+
+@router.post("/demo", response_model=TokenOut)
+def demo_login(db: Session = Depends(get_db)):
+    """One-click sign-in to the shared demo account. Only exists when DEMO_MODE is on."""
+    from app.seed_demo import DEMO_EMAIL, seed
+
+    if not settings.demo_mode:
+        raise HTTPException(404, "Not found")
+    user = db.scalar(select(User).where(User.email == DEMO_EMAIL)) or seed(db)
+    return _tokens(user)
 
 
 @router.post("/register", response_model=TokenOut, status_code=201)

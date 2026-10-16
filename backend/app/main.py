@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import accounts_ext, attachments, auth, crud, dashboard, goals, insights, transactions
 from app.core.config import settings
-from app.jobs.scheduler import job
+from app.jobs.scheduler import job, reset_demo
 
 
 @asynccontextmanager
@@ -19,13 +19,16 @@ async def lifespan(app: FastAPI):
         sched = BackgroundScheduler()
         sched.add_job(job, "interval", hours=1)
         sched.add_job(job, "date")  # run once at startup
+        if settings.demo_mode:
+            sched.add_job(reset_demo, "date")
+            sched.add_job(reset_demo, "interval", hours=24)
         sched.start()
     yield
     if sched:
         sched.shutdown(wait=False)
 
 
-app = FastAPI(title="Money Tracker", lifespan=lifespan)
+app = FastAPI(title="Pursely", lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=[o.strip() for o in settings.cors_origins.split(",")],
                    allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 

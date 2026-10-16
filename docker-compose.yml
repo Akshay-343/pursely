@@ -2,19 +2,19 @@ services:
   db:
     image: postgres:16
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-money}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-money}
-      POSTGRES_DB: ${POSTGRES_DB:-moneytracker}
+      POSTGRES_USER: ${POSTGRES_USER:-pursely}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pursely}
+      POSTGRES_DB: ${POSTGRES_DB:-pursely}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-money}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pursely}"]
       interval: 5s
       retries: 10
   api:
     build: ./backend
     environment:
-      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-money}:${POSTGRES_PASSWORD:-money}@db:5432/${POSTGRES_DB:-moneytracker}
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-pursely}:${POSTGRES_PASSWORD:-pursely}@db:5432/${POSTGRES_DB:-pursely}
       SECRET_KEY: ${SECRET_KEY:-dev-secret-change-me}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
       UPLOAD_DIR: /data/uploads
@@ -26,6 +26,9 @@ services:
       SMTP_STARTTLS: ${SMTP_STARTTLS:-true}
       APP_URL: ${APP_URL:-http://localhost:5173}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      DEMO_MODE: ${DEMO_MODE:-false}
+    ports:
+      - "8000:8000"
     volumes:
       - uploads:/data/uploads
     depends_on:
@@ -33,6 +36,8 @@ services:
         condition: service_healthy
   web:
     build: ./frontend
+    ports:
+      - "5173:80"
     depends_on:
       - api
 volumes:

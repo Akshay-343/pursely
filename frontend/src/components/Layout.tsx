@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bell, CreditCard, Landmark, LayoutDashboard, LineChart, LogOut, MoreHorizontal, Moon, PiggyBank, Plus, Receipt, Settings, Sun, Target } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import Logo from "@/components/Logo";
 import TransactionDialog from "@/components/TransactionDialog";
 import { Button } from "@/components/ui/button";
 import { api, tokens, type User } from "@/lib/api";
@@ -67,7 +68,7 @@ export default function Layout({ user }: { user: User }) {
   return (
     <div className="min-h-screen md:flex">
       <aside className="hidden w-56 shrink-0 flex-col border-r bg-card p-4 md:flex">
-        <div className="mb-6 text-lg font-bold">💸 Money Tracker</div>
+        <Logo className="mb-6 text-lg" />
         <nav className="flex flex-1 flex-col gap-1">
           {nav.map(({ to, label, icon: I }) => (
             <NavLink key={to} to={to} end={to === "/"}
@@ -83,6 +84,7 @@ export default function Layout({ user }: { user: User }) {
       </aside>
       <div className="flex min-w-0 flex-1 flex-col pb-20 md:pb-0">
         <header className="flex items-center justify-end gap-2 border-b px-4 py-2.5 md:px-8">
+          <Logo className="mr-auto md:hidden" />
           {installEvt && <Button variant="outline" size="sm" onClick={async () => { installEvt.prompt(); await installEvt.userChoice; setInstallEvt(null); }}>Install app</Button>}
           <Button onClick={() => setAdding(true)}><Plus className="h-4 w-4" /> Add</Button>
           <Bell_ />

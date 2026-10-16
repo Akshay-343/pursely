@@ -79,7 +79,7 @@ def monthly_pdf(month: str | None = None, db: Session = Depends(get_db), user=De
     st = getSampleStyleSheet()
     grid = TableStyle([("GRID", (0, 0), (-1, -1), 0.25, colors.lightgrey), ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e6f2f0")),
                        ("FONTSIZE", (0, 0), (-1, -1), 9), ("ALIGN", (-1, 0), (-1, -1), "RIGHT")])
-    el = [Paragraph(f"Money Tracker report: {first:%B %Y}", st["Title"]), Paragraph(user.email, st["Normal"]), Spacer(1, 12)]
+    el = [Paragraph(f"Pursely report: {first:%B %Y}", st["Title"]), Paragraph(user.email, st["Normal"]), Spacer(1, 12)]
     el.append(Table([["Spent", "Income", "Net"], [f"{cur} {spent}", f"{cur} {inc}", f"{cur} {inc - spent}"]], style=grid))
     el += [Spacer(1, 14), Paragraph("Spending by category", st["Heading2"])]
     el.append(Table([["Category", f"Amount ({cur})"]] + [[n, f"{v:,.2f}"] for n, v in cats] if cats else [["No spending", ""]], style=grid))

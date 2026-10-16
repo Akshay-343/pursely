@@ -1,7 +1,7 @@
 {
-  "name": "Money Tracker",
-  "short_name": "Money",
-  "description": "Track expenses, subscriptions, budgets and goals",
+  "name": "Pursely",
+  "short_name": "Pursely",
+  "description": "Your money, neatly kept. Track expenses, subscriptions, budgets and goals.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

@@ -18,7 +18,7 @@ def main() -> int:
         return 1
     print(f"Sending via {settings.smtp_host}:{settings.smtp_port} as {settings.smtp_user or '(no login)'} ...")
     try:
-        deliver(sys.argv[1], "Money Tracker test email", "If you can read this, email is set up correctly.")
+        deliver(sys.argv[1], "Pursely test email", "If you can read this, email is set up correctly.")
     except smtplib.SMTPAuthenticationError:
         print("FAILED: Gmail rejected the login. Use a 16-character App Password (not your normal password), "
               "with 2-Step Verification on, and paste it without spaces.")

@@ -1,7 +1,0 @@
-# Deploy overlay: run the prebuilt images published to ghcr.io instead of building on the server.
-# IMAGE_API / IMAGE_WEB are set by .github/workflows/deploy.yml.
-services:
-  api:
-    image: ${IMAGE_API:?set IMAGE_API}
-  web:
-    image: ${IMAGE_WEB:?set IMAGE_WEB}

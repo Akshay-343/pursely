@@ -1,5 +1,5 @@
 // App-shell cache. API traffic is never cached: money data must always be live (or fail visibly).
-const CACHE = "mt-shell-v1";
+const CACHE = "pursely-shell-v1";
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(["/", "/manifest.webmanifest", "/icon-192.png"])));
   self.skipWaiting();

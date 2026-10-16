@@ -1,8 +1,0 @@
-# Local development only: Compose loads this automatically for a plain `docker compose up`.
-services:
-  api:
-    ports:
-      - "8000:8000"
-  web:
-    ports:
-      - "5173:80"

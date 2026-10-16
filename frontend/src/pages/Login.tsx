@@ -3,10 +3,11 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Field } from "@/components/Field";
 import GoogleButton from "@/components/GoogleButton";
+import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { authConfig, googleLogin, login, register } from "@/lib/api";
+import { authConfig, demoLogin, googleLogin, login, register } from "@/lib/api";
 
 export default function Login() {
   const nav = useNavigate();
@@ -34,15 +35,27 @@ export default function Login() {
     try { await googleLogin(credential); nav("/", { replace: true }); } catch (e: any) { setErr(e.message); } finally { setBusy(false); }
   }
 
+  async function onDemo() {
+    setErr(""); setBusy(true);
+    try { await demoLogin(); nav("/", { replace: true }); } catch (e: any) { setErr(e.message); } finally { setBusy(false); }
+  }
+
   const clientId = cfg.data?.google_client_id;
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-sm">
         <CardContent className="space-y-4 p-6">
-          <h1 className="text-xl font-bold">💸 Money Tracker</h1>
+          <h1><Logo className="text-xl" /></h1>
           <p className="text-sm text-muted-foreground">{mode === "login" ? "Sign in to your account" : "Create your account"}</p>
           {notice && <p role="status" className="rounded-md bg-emerald-500/15 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400">{notice}</p>}
+
+          {cfg.data?.demo && mode === "login" && (
+            <div className="space-y-1.5 rounded-md border border-primary/30 bg-primary/5 p-3">
+              <Button variant="outline" className="w-full" disabled={busy} onClick={onDemo}>Try the demo, no sign-up needed</Button>
+              <p className="text-center text-xs text-muted-foreground">A shared account with sample data. It resets daily.</p>
+            </div>
+          )}
 
           {clientId && (
             <>

@@ -144,7 +144,7 @@ def test_google_rejects_unverified_invalid_and_unconfigured(client, outbox, monk
     assert client.post(f"{API}/google", json={"credential": CRED}).status_code == 401
     monkeypatch.setattr(settings, "google_client_id", "")
     assert client.post(f"{API}/google", json={"credential": CRED}).status_code == 503
-    assert client.get(f"{API}/config").json() == {"google_client_id": "", "email_enabled": False}
+    assert client.get(f"{API}/config").json() == {"google_client_id": "", "email_enabled": False, "demo": False}
 
 
 def test_google_only_user_can_set_a_password_via_reset(client, outbox, monkeypatch):
@@ -180,7 +180,7 @@ def test_send_email_over_smtp(monkeypatch):
     try:
         monkeypatch.setattr(settings, "smtp_host", "127.0.0.1")
         monkeypatch.setattr(settings, "smtp_port", port)
-        monkeypatch.setattr(settings, "smtp_from", "Money Tracker <noreply@example.com>")
+        monkeypatch.setattr(settings, "smtp_from", "Pursely <noreply@example.com>")
         monkeypatch.setattr(settings, "smtp_starttls", False)
         monkeypatch.setattr(settings, "smtp_user", "")
         assert email_mod.send_email("to@example.com", "Hi", "plain body", "<p>html body</p>") is True

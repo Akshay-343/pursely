@@ -14,22 +14,22 @@ def _wrap(title: str, body_html: str, button: tuple[str, str] | None = None) -> 
                f'<span style="word-break:break-all">{escape(url)}</span></p>')
     return (f'<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:520px;margin:0 auto;padding:24px;color:#14201d">'
             f'<h1 style="font-size:20px;margin:0 0 16px">{escape(title)}</h1>{body_html}{btn}'
-            f'<p style="color:#9ca3af;font-size:12px;margin-top:32px">Money Tracker</p></div>')
+            f'<p style="color:#9ca3af;font-size:12px;margin-top:32px">Pursely</p></div>')
 
 
 def welcome(email: str) -> tuple[str, str, str]:
     url = settings.app_url.rstrip("/")
-    subject = "Welcome to Money Tracker"
-    text = (f"Welcome to Money Tracker!\n\nYour account ({email}) is ready. Log your first expense, add your subscriptions "
+    subject = "Welcome to Pursely"
+    text = (f"Welcome to Pursely!\n\nYour account ({email}) is ready. Log your first expense, add your subscriptions "
             f"and set a budget to see your dashboard come alive.\n\nOpen the app: {url}\n")
-    html = _wrap("Welcome to Money Tracker", f"<p>Your account (<b>{escape(email)}</b>) is ready.</p>"
+    html = _wrap("Welcome to Pursely", f"<p>Your account (<b>{escape(email)}</b>) is ready.</p>"
                  "<p>Log your first expense, add your subscriptions and set a budget to see your dashboard come alive.</p>",
-                 ("Open Money Tracker", url))
+                 ("Open Pursely", url))
     return subject, text, html
 
 
 def password_reset(link: str, minutes: int, google_only: bool = False) -> tuple[str, str, str]:
-    subject = "Reset your Money Tracker password"
+    subject = "Reset your Pursely password"
     note = ("You signed up with Google, so you have no password yet. Setting one lets you also sign in with your email.\n\n"
             if google_only else "")
     text = (f"We received a request to reset your password.\n\n{note}Open this link within {minutes} minutes to choose a new one:\n"
@@ -43,7 +43,7 @@ def password_reset(link: str, minutes: int, google_only: bool = False) -> tuple[
 
 
 def password_changed() -> tuple[str, str, str]:
-    subject = "Your Money Tracker password was changed"
+    subject = "Your Pursely password was changed"
     text = ("Your password was just changed. If this was you, no action is needed.\n\n"
             "If it was not you, reset your password right away from the login page.\n")
     html = _wrap("Password changed", "<p>Your password was just changed. If this was you, no action is needed.</p>"

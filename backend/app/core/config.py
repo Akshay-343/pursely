@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    database_url: str = "postgresql+psycopg://money:money@localhost:5432/moneytracker"
+    database_url: str = "postgresql+psycopg://pursely:pursely@localhost:5432/pursely"
     secret_key: str = "dev-secret-change-me"
     access_token_minutes: int = 30
     refresh_token_days: int = 14
@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     google_client_id: str = ""
     reset_token_minutes: int = 30
     reset_max_per_hour: int = 3
+    demo_mode: bool = False   # public demo: "Try the demo" button, demo data reset at startup and daily
 
 
 settings = Settings()
