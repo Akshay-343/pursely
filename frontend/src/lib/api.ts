@@ -1,4 +1,5 @@
-const BASE = "/api/v1";
+const API_URL = import.meta.env.VITE_API_BASE_URL || "";
+const BASE = `${API_URL.replace(/\/+$/, "")}/api/v1`;
 const K = { a: "mt_access", r: "mt_refresh" };
 
 export const tokens = {
