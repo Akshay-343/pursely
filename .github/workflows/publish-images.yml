@@ -54,7 +54,7 @@ jobs:
             type=sha,format=short,prefix=sha-
 
       - name: Build and publish API image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ./backend
           file: ./backend/Dockerfile
@@ -94,7 +94,7 @@ jobs:
             type=sha,format=short,prefix=sha-
 
       - name: Build and publish frontend image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
