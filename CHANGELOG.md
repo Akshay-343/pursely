@@ -7,6 +7,12 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-24
+
+### Changed
+
+- The sign-in page doubles as a landing page: a hero with Pursely's features beside a wallet-styled sign-in box, with Sign in and Create account tabs and a theme toggle.
+
 ## [1.0.0] - 2026-11-08
 
 First stable release.
