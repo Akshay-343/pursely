@@ -104,8 +104,9 @@ def test_login_rate_limit(client):
 def _google(monkeypatch, claims=None, error=None):
     monkeypatch.setattr(settings, "google_client_id", "test-client.apps.googleusercontent.com")
 
-    def fake(token, request, audience):
+    def fake(token, request, audience, clock_skew_in_seconds=0):
         assert audience == "test-client.apps.googleusercontent.com"
+        assert clock_skew_in_seconds > 0
         if error:
             raise error
         return claims
