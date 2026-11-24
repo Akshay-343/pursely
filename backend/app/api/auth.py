@@ -95,8 +95,11 @@ def google_login(body: GoogleIn, request: Request, tasks: BackgroundTasks, db: S
     if not settings.google_client_id:
         raise HTTPException(503, "Google sign-in is not configured")
     try:
-        info = google_id_token.verify_oauth2_token(body.credential, google_requests.Request(), settings.google_client_id)
-    except (ValueError, GoogleAuthError):
+        # Allow a little clock drift: a server clock even 1s behind Google's rejects fresh tokens as "used too early"
+        info = google_id_token.verify_oauth2_token(body.credential, google_requests.Request(), settings.google_client_id,
+                                                   clock_skew_in_seconds=10)
+    except (ValueError, GoogleAuthError) as e:
+        log.warning("Google ID token rejected: %s", e)
         raise HTTPException(401, "Google sign-in failed. Please try again.") from None
     email, sub = (info.get("email") or "").lower(), info.get("sub")
     if not email or not sub or info.get("email_verified") is not True:

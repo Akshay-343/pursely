@@ -13,6 +13,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - The sign-in page doubles as a landing page: a hero with Pursely's features beside a wallet-styled sign-in box, with Sign in and Create account tabs and a theme toggle.
 
+### Fixed
+
+- Sign in with Google no longer fails with "Google sign-in failed" when the server's clock is a second or two behind Google's.
+
 ## [1.0.0] - 2026-11-08
 
 First stable release.

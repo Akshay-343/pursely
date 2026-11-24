@@ -93,9 +93,9 @@ export default function Login() {
   const clientId = cfg.data?.google_client_id;
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden">
+    <div className="relative min-h-screen overflow-x-clip">
       {/* Background: soft brand glows over a faded dot grid. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(hsl(var(--border))_1px,transparent_1px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_70%)]" />
         <div className="absolute -left-40 -top-40 h-[28rem] w-[28rem] rounded-full bg-primary/20 blur-3xl" />
         <div className="absolute -bottom-48 -right-24 h-[30rem] w-[30rem] rounded-full bg-amber-400/15 blur-3xl" />
